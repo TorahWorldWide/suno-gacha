@@ -39,7 +39,8 @@
   /* ── collection ── */
   grid.innerHTML = P.map(function (p) {
     return '<button class="mini" data-t="' + p.id + '" data-id="' + p.id + '" aria-label="' + esc(p.name) + '">' +
-      '<span class="id">' + p.id + '</span><span class="e">' + p.emoji + '</span><span class="n">' + esc(p.name) + "</span></button>";
+      '<span class="id">' + p.id + '</span><span class="art"><span class="e">' + p.emoji + '</span></span>' +
+      '<span class="label"><span class="n">' + esc(p.name) + '</span><span class="g">' + esc(p.tagline) + "</span></span></button>";
   }).join("");
   grid.addEventListener("click", function (e) {
     var b = e.target.closest(".mini");
@@ -48,19 +49,20 @@
 
   function pips(n) { var h = ""; for (var i = 1; i <= 5; i++) h += '<i class="' + (i <= n ? "f" : "") + '"></i>'; return '<span class="pips">' + h + "</span>"; }
 
-  function renderStage(p) {
+  function renderStage(p, open) {
     stage.hidden = false;
     stage.innerHTML =
       '<article class="big" data-t="' + p.id + '">' +
         '<div class="decor" data-t="' + p.id + '"><span class="pid">' + p.id + '</span><div class="hero">' + p.emoji + '</div><div class="side">' + p.emoji2 + "</div></div>" +
         '<div class="body">' +
           "<h3>" + esc(p.name) + '</h3><p class="tag">' + esc(p.tagline) + "</p>" +
-          '<div class="meters"><span class="meter">סיכון ' + pips(p.risk) + '</span><span class="meter">הפתעה ' + pips(p.surprise) + "</span></div>" +
           '<p class="quote">' + esc(p.analogy) + "</p>" +
+          '<details class="more"' + (open ? " open" : "") + "><summary>כל הפרטים על הקלף</summary>" +
+          '<div class="meters"><span class="meter">סיכון ' + pips(p.risk) + '</span><span class="meter">הפתעה ' + pips(p.surprise) + "</span></div>" +
           "<h4>איך זה עובד</h4><ol class=\"steps\">" + p.steps.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol>" +
           "<h4>מה לוחצים בסונו</h4><div class=\"chips\">" + p.suno.map(function (s) { return "<span>" + esc(s) + "</span>"; }).join("") + "</div>" +
           '<p class="warn">' + esc(p.warn) + "</p>" +
-        "</div></article>";
+        "</details></div></article>";
   }
 
   function choose(id, scroll) {
@@ -69,7 +71,7 @@
     store.set("proto", id);
     document.body.dataset.theme = id;
     Array.prototype.forEach.call(grid.children, function (b) { b.classList.toggle("on", b.dataset.id === id); });
-    renderStage(p);
+    renderStage(p, !!scroll);   // picked by hand → details open; restored on load → folded
     refresh();
     if (scroll) stage.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -145,8 +147,8 @@
     countEl.className = "count";
     countEl.textContent = has ? n + " תווים" : "";
     if (parts.length > 1) { countEl.classList.add("warn"); countEl.textContent = "טקסט ארוך — יישלח ב־" + parts.length + " הודעות"; }
-    if (!has) { sendBtn.disabled = true; sendLabel.textContent = "קודם מדביקים פסוקים"; }
-    else if (!p) { sendBtn.disabled = true; sendLabel.textContent = "עכשיו מושכים קלף"; }
+    if (!p) { sendBtn.disabled = true; sendLabel.textContent = "קודם בוחרים קלף"; }
+    else if (!has) { sendBtn.disabled = true; sendLabel.textContent = "עכשיו מדביקים פסוקים"; }
     else {
       sendBtn.disabled = false;
       if (state.part >= parts.length) state.part = 0;
