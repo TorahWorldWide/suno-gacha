@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>סונו גאצ'ה</title>
+  <meta name="theme-color" content="#1a0b3d">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@700&family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body data-theme="none">
+  <div class="sky" aria-hidden="true">
+    <div class="rays"></div>
+    <div class="dots"></div>
+    <div class="stars" id="stars"></div>
+  </div>
+
+  <main>
+    <header class="logo">
+      <div class="logo-badge">Suno v6</div>
+      <h1><span>סונו</span> <span class="l2">גאצ'ה</span></h1>
+      <p class="sub">מי יצייר את השיר הבא?</p>
+    </header>
+
+    <section class="panel" aria-label="הטקסט">
+      <div class="step-chip"><b>1</b> מדביקים פסוקים</div>
+      <textarea id="text" rows="5" placeholder="הדבק כאן את הפסוקים…" dir="rtl"></textarea>
+      <div class="count" id="count"></div>
+      <input id="req" type="text" placeholder="בקשה מיוחדת? (לא חובה) — למשל: רגוע, עם חליל" dir="rtl">
+    </section>
+
+    <section class="machine-wrap" aria-label="מכונת הגאצ'ה">
+      <div class="step-chip"><b>2</b> מושכים קלף</div>
+      <div class="machine" id="machine">
+        <div class="marquee"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="dome">
+          <div class="shine"></div>
+          <div class="balls" id="balls"></div>
+        </div>
+        <div class="base">
+          <div class="plate">GACHA</div>
+          <div class="knob" id="knob"><span></span></div>
+          <div class="chute"><div class="capsule out" id="outCapsule"></div></div>
+        </div>
+      </div>
+      <button class="btn pull" id="pull"><span class="btn-in">משוך! 🎰</span></button>
+      <p class="hint">או בוחרים קלף מהאוסף ביד</p>
+    </section>
+
+    <section class="collection" aria-label="האוסף">
+      <h2 class="ribbon"><span>האוסף</span></h2>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="stage" id="stage" hidden></section>
+
+    <footer class="foot">
+      <p><b>3</b> שולחים — טלגרם נפתח עם ההודעה מוכנה, והשיר חוזר אליך שם.</p>
+      <p class="tiny">הדף הזה חי לבד באינטרנט ונשאר פתוח תמיד.</p>
+    </footer>
+  </main>
+
+  <div class="sendbar" id="sendbar">
+    <button class="btn send" id="send" disabled>
+      <span class="btn-in">
+        <svg class="plane" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        <span id="sendLabel">קודם מדביקים פסוקים</span>
+      </span>
+    </button>
+  </div>
+
+  <div class="reveal" id="reveal" hidden>
+    <div class="burst"></div>
+    <div class="confetti" id="confetti"></div>
+    <div class="reveal-capsule" id="revCapsule"><i class="top"></i><i class="bottom"></i></div>
+    <div class="reveal-card" id="revCard"></div>
+    <button class="btn take" id="take"><span class="btn-in">קח את הקלף</span></button>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="protocols.js?v=3"></script>
+  <script src="app.js?v=3"></script>
+</body>
+</html>
