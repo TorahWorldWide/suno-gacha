@@ -364,6 +364,8 @@ body[data-theme=P0] { --bg1: #8a7440; --bg2: #2a2110; --accent: #ffe9a8; }
   font-weight: 700; font-size: 15px; line-height: 1.45; text-align: center; box-shadow: var(--hard); opacity: 0; pointer-events: none;
   transition: opacity .25s, transform .25s var(--ease-pop); }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.act.show { pointer-events: auto; }
+.toast a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
 @media (min-width: 640px) {
   main { padding-top: 28px; }

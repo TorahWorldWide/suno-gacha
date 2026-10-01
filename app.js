@@ -2,6 +2,7 @@
   "use strict";
   var P = window.PROTOCOLS, BOT = window.BOT_USERNAME;
   var LIMIT = 3800;                       // Telegram trims drafts at 4096 code points
+  var TME_MAX = 4000;                     // t.me answers "400 Bad Request" to an address longer than ~4100 characters
   var $ = function (id) { return document.getElementById(id); };
   var textEl = $("text"), reqEl = $("req"), countEl = $("count");
   var machine = $("machine"), balls = $("balls"), outCapsule = $("outCapsule");
@@ -157,7 +158,7 @@
   }
 
   function toast(msg, ms) {
-    toastEl.textContent = msg; toastEl.classList.add("show");
+    toastEl.textContent = msg; toastEl.classList.remove("act"); toastEl.classList.add("show");
     clearTimeout(toast.t); toast.t = setTimeout(function () { toastEl.classList.remove("show"); }, ms || 5200);
   }
 
@@ -168,8 +169,26 @@
     toast(more ? "טלגרם נפתח — לוחצים שלח, ואז חוזרים לכאן לחלק הבא." : "טלגרם נפתח עם ההודעה מוכנה — נשאר ללחוץ שלח. (אם השורה ריקה: ההודעה הועתקה, רק להדביק)", 8000);
     state.part = more ? state.part + 1 : 0;
     refresh();
-    window.location.href = "https://t.me/" + BOT + "?text=" + encodeURIComponent(msg);
+    openTelegram(msg);
   });
+
+  // A Hebrew letter or vowel point costs 6 address characters, so anything but a short text is past
+  // t.me's limit. Those go straight to the Telegram app with the same link t.me itself hands over.
+  function openTelegram(msg) {
+    var enc = encodeURIComponent(msg), web = "https://t.me/" + BOT + "?text=" + enc;
+    if (web.length <= TME_MAX) { window.__gacha.go(web); return; }
+    var left = false, mark = function () { left = true; toastEl.classList.remove("show"); };
+    window.addEventListener("blur", mark, { once: true });
+    document.addEventListener("visibilitychange", mark, { once: true });
+    setTimeout(function () { if (!left && !document.hidden) notOpened(); }, 2500);
+    window.__gacha.go("tg://resolve?domain=" + BOT + "&text=" + enc);
+  }
+  function notOpened() {
+    toast("טלגרם לא נפתח לבד? ההודעה כבר הועתקה — ", 20000);
+    var a = document.createElement("a");
+    a.href = "https://t.me/" + BOT; a.textContent = "פותחים את הצ'אט ומדביקים";
+    toastEl.appendChild(a); toastEl.classList.add("act");
+  }
 
   /* ── wiring + restore ── */
   textEl.value = store.get("text"); reqEl.value = store.get("req");
@@ -178,5 +197,5 @@
   var saved = store.get("proto");
   if (saved && byId(saved)) choose(saved, false); else refresh();
 
-  window.__gacha = { buildParts: buildParts, choose: choose, state: state };
+  window.__gacha = { buildParts: buildParts, choose: choose, state: state, go: function (url) { window.location.href = url; } };
 })();
