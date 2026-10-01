@@ -166,22 +166,25 @@
     var parts = buildParts(); if (!parts.length) return;
     var msg = parts[state.part], more = state.part < parts.length - 1;
     try { if (navigator.clipboard) navigator.clipboard.writeText(msg).catch(function () {}); } catch (e) {}
-    toast(more ? "טלגרם נפתח — לוחצים שלח, ואז חוזרים לכאן לחלק הבא." : "טלגרם נפתח עם ההודעה מוכנה — נשאר ללחוץ שלח. (אם השורה ריקה: ההודעה הועתקה, רק להדביק)", 8000);
+    toast(more ? "בטלגרם: בוחרים את הרמס ולוחצים שלח — ואז חוזרים לכאן לחלק הבא." : "בטלגרם: בוחרים את הרמס, ההודעה כבר מחכה בשורה — נשאר ללחוץ שלח.", 8000);
     state.part = more ? state.part + 1 : 0;
     refresh();
     openTelegram(msg);
   });
 
+  // Telegram throws the draft away when the link points at a chat that is already on screen (it only
+  // shakes the chat), and this page is normally opened from the Hermes chat itself. A share link has
+  // no such case: Telegram asks which chat, then puts the text in that chat's draft.
   // A Hebrew letter or vowel point costs 6 address characters, so anything but a short text is past
   // t.me's limit. Those go straight to the Telegram app with the same link t.me itself hands over.
   function openTelegram(msg) {
-    var enc = encodeURIComponent(msg), web = "https://t.me/" + BOT + "?text=" + enc;
+    var enc = encodeURIComponent(msg), web = "https://t.me/share/url?url=" + enc;
     if (web.length <= TME_MAX) { window.__gacha.go(web); return; }
     var left = false, mark = function () { left = true; toastEl.classList.remove("show"); };
     window.addEventListener("blur", mark, { once: true });
     document.addEventListener("visibilitychange", mark, { once: true });
     setTimeout(function () { if (!left && !document.hidden) notOpened(); }, 2500);
-    window.__gacha.go("tg://resolve?domain=" + BOT + "&text=" + enc);
+    window.__gacha.go("tg://msg_url?url=" + enc);
   }
   function notOpened() {
     toast("טלגרם לא נפתח לבד? ההודעה כבר הועתקה — ", 20000);
